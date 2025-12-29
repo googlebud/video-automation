@@ -1,0 +1,25 @@
+{
+  "videos": [
+    {
+      "title": "3 Habits That Changed My Life",
+      "script": "Want to transform your life? Start with these three simple habits. First, wake up at 5 AM every single day. This gives you a head start before the world wakes up. Second, exercise for at least 30 minutes. Your body is your temple. Third, read for one hour daily. Knowledge is power. These three habits will compound over time and completely transform who you are. The best time to start was yesterday. The second best time is now.",
+      "keyword": "motivation",
+      "tags": ["selfimprovement", "motivation", "habits"],
+      "niche": "self-improvement"
+    },
+    {
+      "title": "5 Passive Income Ideas for 2025",
+      "script": "Passive income isn't a myth, but it requires work upfront. Here are five proven methods. Number one: Create digital products like templates or courses. Number two: Start a faceless YouTube channel. Number three: Invest in dividend stocks. Number four: Build niche affiliate websites. Number five: Rent out digital assets like domain names. Pick one, master it, then scale. Your future self will thank you.",
+      "keyword": "money",
+      "tags": ["passiveincome", "makemoneyonline", "sidehustle"],
+      "niche": "finance"
+    },
+    {
+      "title": "The Truth About Productivity",
+      "script": "Everyone talks about productivity hacks, but here's what actually works. Stop multitasking. Your brain can't focus on multiple things effectively. Use the Pomodoro Technique: 25 minutes of deep work, 5 minute break. Repeat. Block all distractions. Turn off notifications. Close unnecessary tabs. And here's the secret most miss: sleep 7 to 8 hours. A tired brain is an unproductive brain. Work smarter, not longer.",
+      "keyword": "productivity",
+      "tags": ["productivity", "timemanagement", "focus"],
+      "niche": "productivity"
+    }
+  ]
+}

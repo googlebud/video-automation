@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+outputs/*.mp4
+outputs/*.mov
+outputs/*.avi
+temp/*
+!temp/.gitkeep
+!outputs/.gitkeep
+
+# API keys (keep config.json template but not actual keys)
+config.json
+
+# Large files
+*.mp4
+*.mov
+*.avi
+*.wav
+*.mp3
+
+# Logs
+*.log
+
+# Environment variables
+.env
+config.json.backup

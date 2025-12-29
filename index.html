@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Automation Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .main {
+            padding: 40px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .video-list {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .video-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .video-item h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .video-item p {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .video-item .meta {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            opacity: 0.9;
+        }
+        
+        .export-json {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .export-json pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Video Automation System</h1>
+            <p>Create viral faceless videos at scale</p>
+        </div>
+        
+        <div class="main">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('create')">Create Video</button>
+                <button class="tab" onclick="switchTab('queue')">Content Queue</button>
+                <button class="tab" onclick="switchTab('analytics')">Analytics</button>
+                <button class="tab" onclick="switchTab('settings')">Settings</button>
+            </div>
+            
+            <!-- Create Video Tab -->
+            <div id="create" class="tab-content active">
+                <h2 style="margin-bottom: 20px;">Create New Video</h2>
+                <form id="videoForm">
+                    <div class="form-group">
+                        <label>Video Title</label>
+                        <input type="text" id="title" placeholder="Enter an engaging title..." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Script (Hook → Value → CTA)</label>
+                        <textarea id="script" placeholder="Write your video script here. Keep it under 60 seconds for best performance..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Keyword (for background footage)</label>
+                        <input type="text" id="keyword" placeholder="e.g., motivation, money, success" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Niche</label>
+                        <select id="niche">
+                            <option value="self-improvement">Self Improvement</option>
+                            <option value="finance">Finance/Money</option>
+                            <option value="productivity">Productivity</option>
+                            <option value="health">Health/Fitness</option>
+                            <option value="tech">Technology</option>
+                            <option value="business">Business</option>
+                            <option value="motivation">Motivation</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tags (comma separated)</label>
+                        <input type="text" id="tags" placeholder="viral, motivation, success">
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="submit" class="btn">Add to Queue</button>
+                        <button type="button" class="btn btn-secondary" onclick="generateBatch()">Generate AI Scripts (10x)</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Queue Tab -->
+            <div id="queue" class="tab-content">
+                <h2 style="margin-bottom: 20px;">Content Queue</h2>
+                <div id="videoList" class="video-list">
+                    <!-- Videos will be added here -->
+                </div>
+                
+                <div class="export-json">
+                    <h3 style="margin-bottom: 15px;">Export JSON for Generation</h3>
+                    <pre id="jsonOutput">{"videos": []}</pre>
+                    <div class="action-buttons">
+                        <button class="btn" onclick="downloadJSON()">Download JSON</button>
+                        <button class="btn btn-secondary" onclick="copyJSON()">Copy to Clipboard</button>
+                        <button class="btn" onclick="clearQueue()">Clear Queue</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analytics Tab -->
+            <div id="analytics" class="tab-content">
+                <h2 style="margin-bottom: 20px;">Performance Analytics</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3 id="totalVideos">0</h3>
+                        <p>Total Videos</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="avgLength">0s</h3>
+                        <p>Avg Length</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="topNiche">-</h3>
+                        <p>Top Niche</p>
+                    </div>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; text-align: center;">
+                    <h3 style="margin-bottom: 15px;">Next Steps</h3>
+                    <p style="color: #666; margin-bottom: 20px;">
+                        1. Create 10-20 videos in your queue<br>
+                        2. Download the JSON file<br>
+                        3. Run: <code style="background: #e0e0e0; padding: 5px 10px; border-radius: 4px;">python generate_video.py content.json</code><br>
+                        4. Upload to TikTok/YouTube Shorts/Instagram Reels
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Settings Tab -->
+            <div id="settings" class="tab-content">
+                <h2 style="margin-bottom: 20px;">Configuration</h2>
+                
+                <div class="form-group">
+                    <label>OpenAI API Key (for TTS)</label>
+                    <input type="password" id="openaiKey" placeholder="sk-...">
+                </div>
+                
+                <div class="form-group">
+                    <label>Pexels API Key (for stock footage)</label>
+                    <input type="password" id="pexelsKey" placeholder="Free at pexels.com/api">
+                </div>
+                
+                <div class="form-group">
+                    <label>Voice Type</label>
+                    <select id="voiceType">
+                        <option value="onyx">Onyx (Deep Male)</option>
+                        <option value="echo">Echo (Male)</option>
+                        <option value="fable">Fable (British Male)</option>
+                        <option value="nova">Nova (Female)</option>
+                        <option value="shimmer">Shimmer (Female)</option>
+                    </select>
+                </div>
+                
+                <button class="btn" onclick="saveSettings()">Save Settings</button>
+                
+                <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 8px;">
+                    <h4 style="margin-bottom: 10px;">⚡ Quick Start</h4>
+                    <p style="color: #856404; line-height: 1.6;">
+                        1. Get free Pexels API key: <a href="https://www.pexels.com/api/" target="_blank">pexels.com/api</a><br>
+                        2. Optional: OpenAI key for better TTS (or use free edge-tts)<br>
+                        3. Create content in "Create Video" tab<br>
+                        4. Download JSON and run Python script locally
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let contentQueue = JSON.parse(localStorage.getItem('contentQueue') || '[]');
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            if (tabName === 'queue') updateVideoList();
+            if (tabName === 'analytics') updateAnalytics();
+        }
+        
+        document.getElementById('videoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const video = {
+                title: document.getElementById('title').value,
+                script: document.getElementById('script').value,
+                keyword: document.getElementById('keyword').value,
+                niche: document.getElementById('niche').value,
+                tags: document.getElementById('tags').value.split(',').map(t => t.trim())
+            };
+            
+            contentQueue.push(video);
+            localStorage.setItem('contentQueue', JSON.stringify(contentQueue));
+            
+            this.reset();
+            alert('Video added to queue!');
+        });
+        
+        function updateVideoList() {
+            const list = document.getElementById('videoList');
+            const json = document.getElementById('jsonOutput');
+            
+            if (contentQueue.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No videos in queue. Create some!</p>';
+            } else {
+                list.innerHTML = contentQueue.map((v, i) => `
+                    <div class="video-item">
+                        <h3>${v.title}</h3>
+                        <p>${v.script.substring(0, 150)}...</p>
+                        <div class="meta">
+                            <span>🎯 ${v.niche}</span>
+                            <span>🔑 ${v.keyword}</span>
+                            <span>🏷️ ${v.tags.join(', ')}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            json.textContent = JSON.stringify({videos: contentQueue}, null, 2);
+        }
+        
+        function updateAnalytics() {
+            document.getElementById('totalVideos').textContent = contentQueue.length;
+            
+            const niches = contentQueue.reduce((acc, v) => {
+                acc[v.niche] = (acc[v.niche] || 0) + 1;
+                return acc;
+            }, {});
+            
+            const topNiche = Object.entries(niches).sort((a, b) => b[1] - a[1])[0];
+            document.getElementById('topNiche').textContent = topNiche ? topNiche[0] : '-';
+        }
+        
+        function downloadJSON() {
+            const data = JSON.stringify({videos: contentQueue}, null, 2);
+            const blob = new Blob([data], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `content_${Date.now()}.json`;
+            a.click();
+        }
+        
+        function copyJSON() {
+            const text = document.getElementById('jsonOutput').textContent;
+            navigator.clipboard.writeText(text);
+            alert('Copied to clipboard!');
+        }
+        
+        function clearQueue() {
+            if (confirm('Clear all videos from queue?')) {
+                contentQueue = [];
+                localStorage.setItem('contentQueue', '[]');
+                updateVideoList();
+            }
+        }
+        
+        function saveSettings() {
+            const settings = {
+                openai_api_key: document.getElementById('openaiKey').value,
+                pexels_api_key: document.getElementById('pexelsKey').value,
+                voice: document.getElementById('voiceType').value
+            };
+            localStorage.setItem('settings', JSON.stringify(settings));
+            alert('Settings saved! Update your config.json file with these values.');
+        }
+        
+        function generateBatch() {
+            alert('AI Script Generation: This would integrate with Claude API or GPT to generate 10 viral scripts based on your niche. Implement by calling OpenAI API with prompt engineering.');
+        }
+        
+        // Load settings on page load
+        const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+        if (settings.openai_api_key) document.getElementById('openaiKey').value = settings.openai_api_key;
+        if (settings.pexels_api_key) document.getElementById('pexelsKey').value = settings.pexels_api_key;
+        if (settings.voice) document.getElementById('voiceType').value = settings.voice;
+    </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+[
+  {
+    "title": "5 passive income streams for 2025",
+    "status": "success",
+    "path": "outputs/5_passive_income_streams_for_2025_20251229_180425.mp4"
+  },
+  {
+    "title": "How I made my first $10k online",
+    "status": "success",
+    "path": "outputs/How_I_made_my_first_$10k_online_20251229_180458.mp4"
+  },
+  {
+    "title": "Investing mistakes that cost me $50k",
+    "status": "success",
+    "path": "outputs/Investing_mistakes_that_cost_me_$50k_20251229_180524.mp4"
+  },
+  {
+    "title": "Best side hustles that actually work",
+    "status": "success",
+    "path": "outputs/Best_side_hustles_that_actually_work_20251229_180557.mp4"
+  },
+  {
+    "title": "The compound effect of saving $10/day",
+    "status": "failed",
+    "error": "[Errno 32] Broken pipe\n\nMoviePy error: FFMPEG encountered the following error while writing file outputs/The_compound_effect_of_saving_$10/day_20251229_180708.mp4:\n\n b'[out#0/mp4 @ 0x13aa0ec00] Error opening output outputs/The_compound_effect_of_saving_$10/day_20251229_180708.mp4: No such file or directory\\nError opening output file outputs/The_compound_effect_of_saving_$10/day_20251229_180708.mp4.\\nError opening output files: No such file or directory\\n'"
+  }
+]
