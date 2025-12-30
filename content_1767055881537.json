@@ -1,0 +1,13 @@
+{
+  "videos": [
+    {
+      "title": "Test Video",
+      "script": "This is a test. Just checking if the system works. Everything should be automated now. No more errors.",
+      "keyword": "success",
+      "tags": [
+        "test"
+      ],
+      "niche": "finance"
+    }
+  ]
+}
