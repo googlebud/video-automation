@@ -17,10 +17,10 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
     
@@ -31,14 +31,14 @@ jobs:
     
     - name: Install Python dependencies
       run: |
-        pip install -r requirements.txt
+        pip install --break-system-packages moviepy==1.0.3 requests edge-tts Pillow==9.5.0 numpy pydub python-dotenv
     
     - name: Create config from secrets
       run: |
         cat > config.json << EOF
         {
           "output_directory": "outputs",
-          "openai_api_key": "${{ secrets.OPENAI_API_KEY }}",
+          "openai_api_key": "",
           "pexels_api_key": "${{ secrets.PEXELS_API_KEY }}",
           "voice": "onyx",
           "video_settings": {
@@ -49,22 +49,43 @@ jobs:
         }
         EOF
     
+    - name: Configure ImageMagick for MoviePy
+      run: |
+        cat > /tmp/moviepy_config.py << 'PYEOF'
+import os
+os.environ['IMAGEMAGICK_BINARY'] = '/usr/bin/convert'
+PYEOF
+        
+        # Add ImageMagick config to generate_video.py
+        sed -i '11i import os\nos.environ["IMAGEMAGICK_BINARY"] = "/usr/bin/convert"' generate_video.py
+    
+    - name: Find content file
+      id: find_file
+      run: |
+        if [ -n "${{ github.event.inputs.content_file }}" ]; then
+          echo "file=${{ github.event.inputs.content_file }}" >> $GITHUB_OUTPUT
+        else
+          # Find the most recently added content file
+          FILE=$(ls -t content_*.json 2>/dev/null | head -1 || echo "content_template.json")
+          echo "file=$FILE" >> $GITHUB_OUTPUT
+        fi
+    
     - name: Generate videos
       run: |
-        python generate_video.py ${{ github.event.inputs.content_file || 'content_template.json' }}
+        python3 generate_video.py ${{ steps.find_file.outputs.file }}
     
     - name: Upload generated videos
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: generated-videos
-        path: outputs/
+        path: outputs/*.mp4
         retention-days: 7
+        if-no-files-found: warn
     
-    - name: Commit results
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add outputs/*.json
-        git diff --quiet && git diff --staged --quiet || git commit -m "Add generation results [skip ci]"
-        git push
-      continue-on-error: true
+    - name: Upload results
+      uses: actions/upload-artifact@v4
+      with:
+        name: generation-results
+        path: outputs/*.json
+        retention-days: 7
+        if-no-files-found: ignore
