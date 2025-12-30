@@ -46,17 +46,32 @@ jobs:
     
     - name: Configure ImageMagick
       run: |
-        sed -i '11i import os\nos.environ["IMAGEMAGICK_BINARY"] = "/usr/bin/convert"' generate_video.py
+        sed -i '10a import os' generate_video.py
+        sed -i '11a os.environ["IMAGEMAGICK_BINARY"] = "/usr/bin/convert"' generate_video.py
     
     - name: Find latest content file
       id: find_file
       run: |
-        FILE=$(ls -t content_*.json 2>/dev/null | head -1 || echo "content_template.json")
+        FILE=$(ls -t content_*.json 2>/dev/null | head -1)
+        echo "Found file: $FILE"
         echo "file=$FILE" >> $GITHUB_OUTPUT
+    
+    - name: Show content file
+      run: |
+        echo "Content of ${{ steps.find_file.outputs.file }}:"
+        cat ${{ steps.find_file.outputs.file }}
+    
+    - name: Create outputs directory
+      run: |
+        mkdir -p outputs
+        chmod 777 outputs
     
     - name: Generate videos
       run: |
-        python3 generate_video.py ${{ steps.find_file.outputs.file }}
+        echo "Starting video generation..."
+        python3 generate_video.py ${{ steps.find_file.outputs.file }} || echo "Generation failed"
+        echo "Generation complete. Listing outputs:"
+        ls -la outputs/ || echo "No outputs directory"
     
     - name: Upload videos
       uses: actions/upload-artifact@v4
@@ -67,11 +82,10 @@ jobs:
         retention-days: 7
         if-no-files-found: warn
     
-    - name: Upload results
+    - name: Upload all outputs
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: generation-results
-        path: outputs/*.json
+        name: all-outputs
+        path: outputs/
         retention-days: 7
-        if-no-files-found: ignore
